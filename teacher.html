@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Teacher Dashboard — Shallom High</title>
+  <link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+  <nav class="teacher-nav">
+    <div class="nav-left">
+      <img src="shallom-logo.jpeg" class="logo" alt="logo">
+      <h1>Teacher Dashboard</h1>
+    </div>
+    <div class="nav-right">
+      <span id="teacherName">Teacher</span>
+      <span id="teacherClassInfo" style="margin-left:12px; font-weight:600; color:#444;"></span>
+      <button id="btnTeacherBack" class="btn">Main Dashboard</button>
+      <button id="btnTeacherLogout" class="btn">Logout</button>
+    </div>
+  </nav>
+
+  <main class="teacher-main">
+    <div class="tabs">
+      <button class="tab active" data-tab="timetable">Timetable</button>
+      <button class="tab" data-tab="grades">Grades</button>
+      <button class="tab" data-tab="attendance">Attendance</button>
+    </div>
+
+    <div class="card" id="teacherStudentsCard" style="margin:1rem 0;">
+      <div class="card-header"><h3>My Students</h3></div>
+      <div class="card-body">
+        <ul id="teacherStudentsList" style="list-style:none; padding:0; margin:0;"></ul>
+      </div>
+    </div>
+
+    <section id="timetable" class="tab-section active">
+      <h2>My Timetable</h2>
+      <div class="card">
+        <div class="card-header">
+          <h3>Assigned Classes</h3>
+          <p id="ttClassCount" style="margin:0.5rem 0 0 0; color:#666; font-size:0.9em;"></p>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Class</th><th>Day</th><th>Start</th><th>End</th><th>Subject</th></tr>
+          </thead>
+          <tbody id="ttBody"></tbody>
+        </table>
+      </div>
+
+      <div class="card small">
+        <h3>Add Timetable Entry</h3>
+        <form id="ttForm">
+          <div class="form-row"><label>Class</label><input id="ttClass" required></div>
+          <div class="form-row"><label>Day</label><input id="ttDay" required></div>
+          <div class="form-row"><label>Start</label><input id="ttStart" type="time" required></div>
+          <div class="form-row"><label>End</label><input id="ttEnd" type="time" required></div>
+          <div class="form-row"><label>Subject</label><input id="ttSubject" required></div>
+          <div class="form-actions"><button type="submit" class="btn primary">Add</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section id="grades" class="tab-section">
+      <h2>Grades</h2>
+      <div class="card small">
+        <form id="gradeForm">
+          <div class="form-row"><label>Student ID</label><input id="gradeStudentId" required></div>
+          <div class="form-row"><label>Class</label><input id="gradeClass" required></div>
+          <div class="form-row"><label>Subject</label><input id="gradeSubject" required></div>
+          <div class="form-row"><label>Exam</label><input id="gradeExam" placeholder="e.g., Midterm" required></div>
+          <div class="form-row"><label>Grade</label><input id="gradeValue" required></div>
+          <div class="form-actions"><button type="submit" class="btn primary">Save Grade</button></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>ID</th><th>Student</th><th>Class</th><th>Subject</th><th>Exam</th><th>Grade</th><th>Teacher</th></tr></thead>
+          <tbody id="gradesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="attendance" class="tab-section">
+      <h2>Attendance</h2>
+      <div class="card small">
+        <form id="attForm">
+          <div class="form-row"><label>Date</label><input id="attDate" type="date" required></div>
+          <div class="form-row"><label>Class</label>
+            <select id="attClassSelect" required>
+              <option value="">Select Class</option>
+            </select>
+          </div>
+          <div class="form-actions"><button type="button" id="attLoadBtn" class="btn primary">Load Students</button></div>
+        </form>
+      </div>
+
+      <div class="card" id="attMarkingCard" style="display:none;">
+        <div class="card-header">
+          <h3>Mark Attendance</h3>
+          <p id="attMarkingInfo" style="margin:0; color:#666; font-size:0.9em;"></p>
+        </div>
+        <div id="attStudentMarkingList" style="max-height:400px; overflow-y:auto; background:#f9f9f9; border:1px solid #ddd; border-radius:6px; padding:0.5rem;"></div>
+        <div class="form-actions" style="margin-top:1rem; gap:0.5rem; display:flex;">
+          <button type="button" id="attSaveBtn" class="btn primary">Save Attendance</button>
+          <button type="button" id="attCancelBtn" class="btn">Cancel</button>
+        </div>
+      </div>
+      <style>
+        .att-item { display:flex; align-items:center; padding:10px; border-bottom:1px solid #eee; gap:10px; }
+        .att-item input[type="checkbox"] { width:18px; height:18px; cursor:pointer; }
+        .att-item input[type="checkbox"]:checked + label { color:#43e97b; font-weight:600; }
+        .att-item input[type="checkbox"]:not(:checked) + label { color:#ffa502; font-weight:600; }
+        .att-item label { margin:0; flex:1; cursor:pointer; }
+        .att-status-badge { padding:2px 8px; border-radius:12px; font-size:0.8em; font-weight:600; }
+        .att-status-present { background-color:#c8f7dc; color:#118854; }
+        .att-status-absent { background-color:#ffe4cc; color:#cc6600; }
+      </style>
+
+      <div class="card" style="margin-top:2rem;">
+        <div class="card-header">
+          <h3>Attendance Records</h3>
+          <div id="dayFilterButtons" style="margin-top:0.5rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="day-btn" data-day="all" style="background:#667eea; color:white; padding:6px 12px; border:none; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.9em;">All Days</button>
+            <button type="button" class="day-btn" data-day="Monday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Monday</button>
+            <button type="button" class="day-btn" data-day="Tuesday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Tuesday</button>
+            <button type="button" class="day-btn" data-day="Wednesday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Wednesday</button>
+            <button type="button" class="day-btn" data-day="Thursday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Thursday</button>
+            <button type="button" class="day-btn" data-day="Friday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Friday</button>
+            <button type="button" class="day-btn" data-day="Saturday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Saturday</button>
+            <button type="button" class="day-btn" data-day="Sunday" style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:white;">Sunday</button>
+          </div>
+        </div>
+        <table class="table">
+          <thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Status</th><th>Teacher</th></tr></thead>
+          <tbody id="attBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="teacher.js"></script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shallom High School - Management System</title>
+    <link rel="stylesheet" href="school.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="shallom-logo.jpeg" alt="Shallom High School Logo" class="logo-img">
+                <span class="school-name">Shallom High School</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">Dashboard</a></li>
+                <li><a href="#students" class="nav-link" data-section="students">Students</a></li>
+                <li><a href="#classes" class="nav-link" data-section="classes">Classes</a></li>
+                <li><a href="#timetable" class="nav-link" data-section="timetable">Timetable</a></li>
+                <!-- Grades and Attendance removed for headmaster dashboard -->
+                <li><a href="#fees" class="nav-link" data-section="fees">Fees</a></li>
+                <li><a href="#teachers" class="nav-link" data-section="teachers">Teachers</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="notification-badge-container" style="position: relative; margin-right: 1rem;">
+                    <button id="notificationBell" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; position: relative;" title="Notifications">
+                        🔔
+                        <span id="notificationCount" class="notification-count-badge" style="position: absolute; top: -5px; right: -8px; background: #f5576c; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; display: none;">0</span>
+                    </button>
+                </div>
+                <span class="username" id="navUsername">Admin</span>
+                <button id="btnLogout" class="btn logout-btn" title="Logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <h3 class="section-title">Main</h3>
+                    <a href="#dashboard" class="menu-item active" data-menu="dashboard">
+                        <span class="icon">📊</span>
+                        <span class="label">Dashboard</span>
+                    </a>
+                    <a href="#students" class="menu-item" data-menu="students">
+                        <span class="icon">👥</span>
+                        <span class="label">Students</span>
+                    </a>
+                    <a href="#teachers" class="menu-item" data-menu="teachers">
+                        <span class="icon">👨‍🏫</span>
+                        <span class="label">Teachers</span>
+                    </a>
+                </div>
+                <div class="menu-section">
+                    <h3 class="section-title">Academic</h3>
+                    <a href="#classes" class="menu-item" data-menu="classes">
+                        <span class="icon">📚</span>
+                        <span class="label">Classes</span>
+                    </a>
+                    <a href="#timetable" class="menu-item" data-menu="timetable">
+                        <span class="icon">🗓️</span>
+                        <span class="label">Timetable</span>
+                    </a>
+                    <!-- Grades and Attendance removed from sidebar -->
+                    <a href="#fees" class="menu-item" data-menu="fees">
+                        <span class="icon">💰</span>
+                        <span class="label">Fees</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="section-header">
+                    <h1>Dashboard</h1>
+                    <p class="subtitle">Welcome back! Here's your school overview</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            👥
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-title">Total Students</h3>
+                                <p id="totalStudentsStat" class="stat-value">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            👨‍🏫
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-title">Total Teachers</h3>
+                            <p id="totalTeachersStat" class="stat-value">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            📚
+                        </div>
+                        <div class="stat-info">
+                            <h3 class="stat-title">Classes</h3>
+                            <p id="totalClassesStat" class="stat-value">0</p>
+                        </div>
+                    </div>
+                    <!-- Attendance stat removed -->
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>📬 Live Attendance Notifications</h2>
+                            <button id="clearNotificationsBtn" class="btn" style="padding: 4px 12px; font-size: 0.9em;">Clear All</button>
+                        </div>
+                        <div id="notificationsContainer" class="notifications-list" style="max-height: 400px; overflow-y: auto;">
+                            <p style="color: #999; text-align: center; padding: 2rem;">No attendance notifications yet</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Recent Activities</h2>
+                            <button id="clearActivitiesBtn" class="btn" style="padding: 4px 12px; font-size: 0.9em;">Clear All</button>
+                        </div>
+                            <div id="recentActivitiesList" class="activity-list">
+                                <!-- Activities will be inserted here dynamically -->
+                            </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Quick Actions</h2>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="navigateTo('students')">+ Add Student</button>
+                            <button class="btn btn-secondary" onclick="navigateTo('classes')">+ New Class</button>
+                            <button class="btn btn-secondary" onclick="openUserModal()">+ Add Guest</button>
+                            <!-- Teacher-specific quick actions removed -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timetable Section -->
+            <section id="timetable-section" class="content-section">
+                <div class="section-header">
+                    <h1>Timetable Management</h1>
+                    <button class="btn btn-primary" onclick="showAddTimetableEntry()">+ Add Timetable Entry</button>
+                </div>
+
+                <div class="filters">
+                    <select id="timetableClassSelect" class="filter-select" onchange="renderTimetableForClass(this.value)">
+                        <option value="">Select Class</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="populateTimetableClassSelect()">Refresh Classes</button>
+                </div>
+
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Day</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Subject</th>
+                                <th>Teacher</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Students Section -->
+            <section id="students-section" class="content-section">
+                <div class="section-header">
+                    <h1>Students Management</h1>
+                    <button class="btn btn-primary" onclick="showAddStudentForm()">+ Add New Student</button>
+                </div>
+
+                <div class="filters">
+                    <input type="text" id="studentSearch" placeholder="Search students..." class="search-input">
+                    <select id="classFilter" class="filter-select">
+                        <option value="">All Classes</option>
+                        <option value="10-A">10-A</option>
+                        <option value="10-B">10-B</option>
+                        <option value="11-A">11-A</option>
+                        <option value="12-A">12-A</option>
+                    </select>
+                </div>
+
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <!-- Student rows are rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Classes Section -->
+            <section id="classes-section" class="content-section">
+                <div class="section-header">
+                    <h1>Classes Management</h1>
+                    <button id="addClassBtn" class="btn btn-primary" onclick="openClassModal()">+ Add New Class</button>
+                </div>
+                <div class="filters" style="margin: 1rem 0;">
+                    <select id="formLevelFilter" class="filter-select" onchange="filterClassesByFormLevel(this.value)">
+                        <option value="">All Forms</option>
+                        <option value="1">Form 1</option>
+                        <option value="2">Form 2</option>
+                        <option value="3">Form 3</option>
+                        <option value="4">Form 4</option>
+                        <option value="5">Form 5</option>
+                        <option value="6">Form 6</option>
+                    </select>
+                </div>
+                <div class="classes-grid" id="classesContainer">
+                    <!-- Classes will be rendered here dynamically -->
+                </div>
+
+            <!-- Class Modal -->
+            <div id="classModal" class="modal" aria-hidden="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle">Create Class</h3>
+                        <button class="modal-close" onclick="closeClassModal()">✕</button>
+                    </div>
+                    <form id="classForm">
+                        <div class="form-row">
+                            <label>Form Level</label>
+                            <select id="classFormLevelInput" required>
+                                <option value="">Select Form</option>
+                                <option value="1">Form 1</option>
+                                <option value="2">Form 2</option>
+                                <option value="3">Form 3</option>
+                                <option value="4">Form 4</option>
+                                <option value="5">Form 5</option>
+                                <option value="6">Form 6</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label>Class Name</label>
+                            <input type="text" id="classNameInput" required placeholder="e.g., A (will become Form X-A)">
+                        </div>
+                        <div class="form-row">
+                            <label>Class Teacher</label>
+                            <input type="text" id="classTeacherInput" placeholder="Teacher name">
+                        </div>
+                        <div class="form-row">
+                            <label>Room</label>
+                            <input type="text" id="classRoomInput" placeholder="Room number">
+                        </div>
+
+                        <!-- Subjects removed as requested -->
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Class</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeClassModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Class Details Modal -->
+            <div id="classDetailsModal" class="modal" aria-hidden="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="classDetailsTitle">Class Details</h3>
+                        <button class="modal-close" onclick="closeClassDetailsModal()">✕</button>
+                    </div>
+                    <div class="card">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Fee Status</th>
+                                    <th>Midterm</th>
+                                    <th>Final</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="classStudentsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </section>
+
+            <!-- User (Guest) Modal -->
+            <div id="userModal" class="modal" aria-hidden="true">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="userModalTitle">Create Guest User</h3>
+                        <button class="modal-close" onclick="closeUserModal()">✕</button>
+                    </div>
+                    <form id="userForm">
+                        <div class="form-row">
+                            <label>Name</label>
+                            <input type="text" id="guestName" required placeholder="Guest full name">
+                        </div>
+                        <div class="form-row">
+                            <label>Username</label>
+                            <input type="text" id="guestUsername" required placeholder="username">
+                        </div>
+                        <div class="form-row">
+                            <label>Password</label>
+                            <input type="password" id="guestPassword" required placeholder="password">
+                        </div>
+                        <div class="form-row">
+                            <label>Role</label>
+                            <select id="guestRole">
+                                <option value="guest">Guest</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="headmaster">Headmaster</option>
+                            </select>
+                        </div>
+                        <div class="form-row" id="guestClassRow" style="display: none;">
+                            <label>Class</label>
+                            <select id="guestClassSelect">
+                                <option value="">Select Class</option>
+                            </select>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Create Guest</button>
+                            <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Grades section removed for headmaster dashboard -->
+
+            <!-- Attendance section removed for headmaster dashboard -->
+
+            <!-- Teachers Section -->
+            <section id="teachers-section" class="content-section">
+                <div class="section-header">
+                    <h1>Teachers Management</h1>
+                    <button class="btn btn-primary" onclick="showAddTeacherForm()">+ Add Teacher</button>
+                </div>
+
+                <div class="filters">
+                    <input type="text" id="teacherSearch" placeholder="Search teachers..." class="search-input">
+                    <select id="departmentFilter" class="filter-select">
+                        <option value="">All Departments</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Science">Science</option>
+                        <option value="English">English</option>
+                        <option value="History">History</option>
+                    </select>
+                </div>
+
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersTableBody">
+                            <tr>
+                                <td>T001</td>
+                                <td>Mr. Rahman</td>
+                                <td>Mathematics</td>
+                                <td>rahman@school.com</td>
+                                <td>+880-1234-567890</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <button class="btn-small btn-info">View</button>
+                                    <button class="btn-small btn-warning">Edit</button>
+                                    <button class="btn-small btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>T002</td>
+                                <td>Ms. Fatima</td>
+                                <td>English</td>
+                                <td>fatima@school.com</td>
+                                <td>+880-1234-567891</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <button class="btn-small btn-info">View</button>
+                                    <button class="btn-small btn-warning">Edit</button>
+                                    <button class="btn-small btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>T003</td>
+                                <td>Mr. Ahmed</td>
+                                <td>Science</td>
+                                <td>ahmed@school.com</td>
+                                <td>+880-1234-567892</td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td>
+                                    <button class="btn-small btn-info">View</button>
+                                    <button class="btn-small btn-warning">Edit</button>
+                                    <button class="btn-small btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Fees Section -->
+            <section id="fees-section" class="content-section">
+                <div class="section-header">
+                    <h1>School Fees Management</h1>
+                    <button class="btn btn-primary" onclick="showMarkFeeForm()">+ Mark Fee Paid</button>
+                </div>
+
+                <div style="background: #e8f5e9; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #43e97b;">
+                    <p><strong>💡 How it works:</strong> This section automatically shows all students in the system. Mark as PAID when they submit their fees, or use the "Mark Paid" button for pending students.</p>
+                </div>
+
+                <div class="filters">
+                    <input type="text" id="feeSearch" placeholder="Search by student name..." class="search-input">
+                    <select id="feeStatusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                    <select id="feeClassFilter" class="filter-select">
+                        <option value="">All Classes</option>
+                    </select>
+                    <select id="currencySelect" class="filter-select" onchange="changeCurrency(this.value); loadFeesFromStorage(); updateFeeSummary();">
+                        <option value="USD">USD ($)</option>
+                        <option value="ZWL">ZWL (Z$) - Zimbabwe</option>
+                    </select>
+                </div>
+
+                <div id="feeClassSummary" class="card" style="margin: 1rem 0; display: none;">
+                    <div class="card-header"><h3>Class Fee Summary</h3></div>
+                    <div class="card-body" id="feeClassSummaryBody">Select a class to view paid/pending students.</div>
+                </div>
+
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student Name</th>
+                                <th>Class</th>
+                                <th>Fee Amount</th>
+                                <th>Status</th>
+                                <th>Date Paid</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h2>Fee Summary</h2>
+                    </div>
+                    <div class="fee-summary">
+                        <div class="summary-item">
+                            <h3>Total Fees Collected</h3>
+                            <p class="summary-value" id="totalFeesCollected">50,000</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Pending Fees</h3>
+                            <p class="summary-value" id="totalFeesPending" style="color: #f5576c;">15,000</p>
+                        </div>
+                        <div class="summary-item">
+                            <h3>Collection Rate</h3>
+                            <p class="summary-value" id="feeCollectionRate">76.9%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="school.js"></script>
+</body>
+</html>
